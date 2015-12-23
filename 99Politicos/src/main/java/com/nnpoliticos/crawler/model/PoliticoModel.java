@@ -1,17 +1,32 @@
 package com.nnpoliticos.crawler.model;
 
+import java.util.ArrayList;
+
 public class PoliticoModel {
 
 	private String id;
 	private String nome;
 	private String partido;
 	private String estado;
+	private ArrayList<VotacaoModel> votacoes;
+	
+	public PoliticoModel() {
+		votacoes = new ArrayList<VotacaoModel>();
+	}
 	
 	@Override
 	public String toString() {
-		return "[" + id + "] " + nome + " (" + partido + "/" + estado + ")";
+		return "[" + id + "]\t" + nome + " (" + partido + "/" + estado + ")";
 	}
 	
+	public ArrayList<VotacaoModel> getVotacoes() {
+		return votacoes;
+	}
+
+	public void setVotacoes(ArrayList<VotacaoModel> votacoes) {
+		this.votacoes = votacoes;
+	}
+
 	public String getId() {
 		return id;
 	}

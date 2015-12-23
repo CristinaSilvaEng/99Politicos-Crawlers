@@ -56,6 +56,6 @@ public class MateriaModel {
 	
 	@Override
 	public String toString() {
-		return "(" + id + ") " + titulo;
+		return "[" + id + "]\t" + titulo;
 	}
 }

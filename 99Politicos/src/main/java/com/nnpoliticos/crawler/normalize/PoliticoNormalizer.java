@@ -6,6 +6,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import com.nnpoliticos.crawler.model.PoliticoModel;
+import com.nnpoliticos.repository.PoliticoRepository;
 
 public class PoliticoNormalizer implements Normalizer {
 
@@ -17,7 +18,7 @@ public class PoliticoNormalizer implements Normalizer {
 		
 		estados = new HashMap<String, String>();
 		estados.put("Acre", "AC");
-		estados.put("Alagoas", "Alagoas");
+		estados.put("Alagoas", "AL");
 		estados.put("Amapá", "AP");
 		estados.put("Amazonas", "AM");
 		estados.put("Bahia", "BA");
@@ -52,7 +53,7 @@ public class PoliticoNormalizer implements Normalizer {
 		politico.setNome(document.select("h2.name").text());
 		politico.setPartido(document.select("p.entourage").text().split(" - ")[0]);
 		politico.setEstado(estados.get(document.select("div.about > small.bio").text().split(" • ")[2]));
-//		System.out.println(politico);
+		PoliticoRepository.getInstance().addPolitico(politico);
 	}
 
 }
