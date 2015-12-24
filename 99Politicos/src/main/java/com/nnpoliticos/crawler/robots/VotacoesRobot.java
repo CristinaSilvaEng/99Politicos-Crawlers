@@ -6,14 +6,18 @@ import java.util.HashMap;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import com.nnpoliticos.crawler.model.MateriaModel;
 import com.nnpoliticos.crawler.normalize.MateriaNormalizer;
+import com.nnpoliticos.crawler.normalize.VotacaoNormalizer;
+import com.nnpoliticos.repository.PoliticoRepository;
 
 public class VotacoesRobot implements Robots {
 	
 	public void run() {
 		HashMap<String, MateriaModel> materias = new HashMap<String, MateriaModel>();
+		PoliticoRepository repository = PoliticoRepository.getInstance();
 		
 		// TODO: Completar URL com datas dinamicamente.
 		String baseURL = "http://www25.senado.leg.br/web/atividade/votacoes-nominais/-/v/periodo/01/01/2011/a/31/12/2015";
@@ -21,12 +25,14 @@ public class VotacoesRobot implements Robots {
 		try {
 			Document document = Jsoup.connect(baseURL).get();
 			for (Element element : document.select("table.table")) {
-				String materia = element.select("tbody > tr > td").first().text();
+				Elements row = element.select("tbody > tr");
+				String materia = row.select("td").first().text();
 				if (!materia.contains("(votação secreta)")) {
 					// Warning! Shit code is coming.
 					MateriaModel materiaModel = getMateria(materia);
 					if (materiaModel != null) {
-						materias.put(materiaModel.getId(), materiaModel);
+						materias.put(row.select("td").get(2).select("a").attr("href"), materiaModel);
+						repository.addMateria(materiaModel);
 					}
 				}
 			}
@@ -34,9 +40,9 @@ public class VotacoesRobot implements Robots {
 			e.printStackTrace();
 		}
 			
-		int i = 0;
 		for (String materia : materias.keySet()) {
-			System.out.println("["+ ++i +"]\t" + materias.get(materia));
+			VotacaoNormalizer votacaoNormalizer = new VotacaoNormalizer(materia);
+			votacaoNormalizer.normalize(materias.get(materia).getId());
 		}
 	}
 
